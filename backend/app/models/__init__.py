@@ -8,6 +8,7 @@ from app.models.crm import CRMCase, CRMActivity, UnifiedTimelineEvent
 from app.models.audit import AuditLog
 from app.models.reconciliation import PayrollReconciliationRun, PayrollDiscrepancy
 from app.models.workflow import WorkflowRule, WorkflowExecution, ApprovalRequest
+from app.models.notification import Notification, CaseMessage
 
 __all__ = [
     "Base",
@@ -31,4 +32,6 @@ __all__ = [
     "WorkflowRule",
     "WorkflowExecution",
     "ApprovalRequest",
+    "Notification",
+    "CaseMessage",
 ]
