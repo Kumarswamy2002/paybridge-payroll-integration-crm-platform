@@ -2,6 +2,18 @@ from typing import Optional, List, Dict, Any
 from datetime import date, datetime
 from pydantic import BaseModel
 
+class CanonicalTaxWithholding(BaseModel):
+    tax_name: str  # Federal Income Tax, State Income Tax, Social Security, Medicare
+    amount: float
+    tax_code: Optional[str] = None
+    tax_authority: Optional[str] = None
+
+class CanonicalDeduction(BaseModel):
+    deduction_name: str  # 401k, Health Insurance, Dental, FSA, HSA
+    amount: float
+    is_pre_tax: bool = True
+    employer_match_amount: float = 0.0
+
 class CanonicalEmployee(BaseModel):
     provider_name: str
     external_id: str
@@ -20,9 +32,10 @@ class CanonicalEmployee(BaseModel):
 class CanonicalCompensation(BaseModel):
     provider_name: str
     external_employee_id: str
-    pay_frequency: str
+    pay_frequency: str  # MONTHLY, BIWEEKLY, WEEKLY, ANNUAL
     currency: str = "USD"
     base_pay: float
+    hourly_rate: float = 0.0
     effective_date: Optional[date] = None
 
 class CanonicalPayrollRun(BaseModel):
@@ -46,4 +59,6 @@ class CanonicalPayrollResult(BaseModel):
     tax_withheld: float
     deductions: float
     direct_deposit_amount: float
+    taxes_breakdown: List[CanonicalTaxWithholding] = []
+    deductions_breakdown: List[CanonicalDeduction] = []
     payslip_url: Optional[str] = None

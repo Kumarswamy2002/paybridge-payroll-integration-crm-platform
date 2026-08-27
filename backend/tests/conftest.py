@@ -1,12 +1,22 @@
+import sys
+import os
 import asyncio
 import pytest
 from typing import AsyncGenerator
+
+# Ensure workspace root and backend directory are in sys.path
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+WORKSPACE_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+if WORKSPACE_ROOT not in sys.path:
+    sys.path.insert(0, WORKSPACE_ROOT)
+
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app.core.database import Base, get_db
 from app.main import app
 
-# In-memory SQLite for fast testing
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
 engine_test = create_async_engine(TEST_DATABASE_URL, echo=False)

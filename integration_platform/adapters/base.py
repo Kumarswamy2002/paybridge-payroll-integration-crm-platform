@@ -16,7 +16,7 @@ class BasePayrollAdapter(ABC):
         pass
 
     @abstractmethod
-    async def get_employees(() -> List[CanonicalEmployee]:
+    async def get_employees(self) -> List[CanonicalEmployee]:
         """Fetch all employees transformed into canonical model."""
         pass
 
