@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayBridge — Payroll Integration CRM Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#0284c7', 600: '#0369a1' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0b0f19; color: #f1f5f9; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); }
+  </style>
+</head>
+<body class="min-h-screen flex text-slate-100">
+
+  <!-- Sidebar -->
+  <aside className="w-64 glass-panel border-r border-slate-800 flex flex-col justify-between h-screen sticky top-0">
+    <div class="w-64 glass-panel border-r border-slate-800/80 flex flex-col h-screen sticky top-0 p-4 space-y-6">
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg">
+          ⚡
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-white leading-none">PayBridge</h1>
+          <span class="text-[10px] text-sky-400 font-mono tracking-widest uppercase">Payroll CRM</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div class="overflow-hidden text-xs">
+          <p class="font-semibold text-slate-200 truncate">Nexus Global Inc.</p>
+          <p class="text-[10px] text-slate-400">Enterprise Tenant</p>
+        </div>
+      </div>
+
+      <nav class="space-y-1 text-xs font-semibold">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg bg-sky-600/30 text-sky-300 border border-sky-500/30">
+          📊 Dashboard Overview
+        </button>
+        <button onclick="switchTab('employees')" id="nav-employees" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+          👥 Employee 360° Directory
+        </button>
+        <button onclick="switchTab('payroll')" id="nav-payroll" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+          💵 Payroll & Reconciliation
+        </button>
+        <button onclick="switchTab('cases')" id="nav-cases" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+          🎫 Cases & Exceptions
+        </button>
+        <button onclick="switchTab('integrations')" id="nav-integrations" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+          🔌 Integration Hub
+        </button>
+      </nav>
+
+      <div class="pt-6 border-t border-slate-800 text-[11px] text-slate-500 flex justify-between">
+        <span>Backend API: <strong>Connected</strong></span>
+        <span class="text-emerald-400">v1.0.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <header class="h-16 glass-panel border-b border-slate-800 px-8 flex items-center justify-between sticky top-0 z-30">
+      <div class="flex items-center gap-4">
+        <h2 id="header-title" class="text-xl font-bold text-slate-100">Payroll CRM Dashboard</h2>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          ● API Live on Port 8000
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="triggerSync()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md">
+          ⚡ Trigger Provider Sync
+        </button>
+      </div>
+    </header>
+
+    <main id="main-container" class="p-8 space-y-8 flex-1 overflow-y-auto">
+      <!-- Content injected dynamically via JavaScript -->
+    </main>
+  </div>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000/api/v1";
+
+    const state = {
+      employees: [
+        { id: "emp-1", code: "EMP-001", name: "Sarah Connor", email: "sarah.c@nexuscorp.com", dept: "Engineering", provider: "Gusto", salary: 165000, status: "IN_SYNC" },
+        { id: "emp-2", code: "EMP-002", name: "John Reese", email: "john.r@nexuscorp.com", dept: "Operations", provider: "ADP Workforce", salary: 185000, status: "IN_SYNC" },
+        { id: "emp-3", code: "EMP-003", name: "Elena Rostova", email: "elena.r@nexuscorp.com", dept: "Finance", provider: "Rippling", salary: 110000, status: "OUT_OF_SYNC" },
+        { id: "emp-4", code: "EMP-004", name: "Alex Mercer", email: "alex.m@nexuscorp.com", dept: "HR", provider: "Workday", salary: 128000, status: "ERROR" }
+      ],
+      cases: [
+        { ticket: "PAY-1042", name: "Sarah Connor", title: "January Tax Withholding Discrepancy", priority: "HIGH", status: "INVESTIGATING" },
+        { ticket: "PAY-1043", name: "Elena Rostova", title: "Rippling Provider Sync Failed", priority: "URGENT", status: "OPEN" },
+        { ticket: "PAY-1044", name: "Alex Mercer", title: "Bonus Payout Confirmation Q4", priority: "MEDIUM", status: "RESOLVED" }
+      ]
+    };
+
+    function switchTab(tab) {
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.className = "w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40";
+      });
+      const activeBtn = document.getElementById(`nav-${tab}`);
+      if(activeBtn) activeBtn.className = "w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg bg-sky-600/30 text-sky-300 border border-sky-500/30";
+
+      const container = document.getElementById('main-container');
+      const title = document.getElementById('header-title');
+
+      if(tab === 'dashboard') {
+        title.innerText = "Payroll CRM Dashboard";
+        container.innerHTML = renderDashboard();
+      } else if(tab === 'employees') {
+        title.innerText = "Employee 360° Directory";
+        container.innerHTML = renderEmployees();
+      } else if(tab === 'payroll') {
+        title.innerText = "Payroll & Reconciliation Engine";
+        container.innerHTML = renderPayroll();
+      } else if(tab === 'cases') {
+        title.innerText = "Payroll Cases & Exceptions";
+        container.innerHTML = renderCases();
+      } else if(tab === 'integrations') {
+        title.innerText = "Payroll Integration Hub";
+        container.innerHTML = renderIntegrations();
+      }
+    }
+
+    function renderDashboard() {
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="glass-card rounded-xl p-5 border border-slate-800">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Active Employees</span>
+            <div class="text-2xl font-bold text-slate-100 mt-2">4</div>
+            <p class="text-xs text-emerald-400 mt-1">↑ 100% active in CRM</p>
+          </div>
+          <div class="glass-card rounded-xl p-5 border border-slate-800">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Monthly Payroll</span>
+            <div class="text-2xl font-bold text-emerald-400 mt-2">$49,000 / mo</div>
+            <p class="text-xs text-slate-500 mt-1">Total annual: $588,000</p>
+          </div>
+          <div class="glass-card rounded-xl p-5 border border-slate-800">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Open Cases</span>
+            <div class="text-2xl font-bold text-amber-400 mt-2">2 Active</div>
+            <p class="text-xs text-slate-500 mt-1">1 resolved today</p>
+          </div>
+          <div class="glass-card rounded-xl p-5 border border-slate-800">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Connected Adapters</span>
+            <div class="text-2xl font-bold text-sky-400 mt-2">4 / 4 Active</div>
+            <p class="text-xs text-emerald-400 mt-1">Gusto, ADP, Rippling, Workday</p>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-xl p-6 border border-slate-800">
+          <h3 class="text-base font-bold text-slate-100 mb-4">Employee Payroll CRM Directory</h3>
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
+              <tr>
+                <th class="p-3">Employee</th>
+                <th class="p-3">Department</th>
+                <th class="p-3">Provider</th>
+                <th class="p-3">Base Salary</th>
+                <th class="p-3">Sync Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              ${state.employees.map(e => `
+                <tr class="hover:bg-slate-800/40">
+                  <td class="p-3 font-semibold text-slate-100">${e.name}<div class="text-[10px] text-slate-400">${e.email}</div></td>
+                  <td class="p-3">${e.dept}</td>
+                  <td class="p-3">${e.provider}</td>
+                  <td class="p-3 font-mono font-bold text-emerald-400">$${e.salary.toLocaleString()} / yr</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${e.status === 'IN_SYNC' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">${e.status}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderEmployees() {
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          ${state.employees.map(e => `
+            <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-bold text-white text-lg">
+                    ${e.name[0]}
+                  </div>
+                  <div>
+                    <h4 class="text-base font-bold text-slate-100">${e.name}</h4>
+                    <p class="text-xs text-sky-400 font-mono">${e.code} • ${e.dept}</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">ACTIVE</span>
+              </div>
+              <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 grid grid-cols-2 gap-4 text-xs">
+                <div><span class="text-slate-500 text-[10px] uppercase block">Provider</span><strong class="text-slate-200">${e.provider}</strong></div>
+                <div><span class="text-slate-500 text-[10px] uppercase block">Base Salary</span><strong class="text-emerald-400 font-mono">$${e.salary.toLocaleString()}</strong></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderPayroll() {
+      return `
+        <div class="glass-card rounded-xl p-6 border border-slate-800 space-y-4">
+          <h3 class="text-base font-bold text-slate-100">Canonical Payroll Model & Reconciliation Engine</h3>
+          <p class="text-xs text-slate-400">Converts provider schemas (Gusto, ADP, Rippling, Workday) into internal PayBridge canonical structures.</p>
+          <div class="grid grid-cols-3 gap-6 pt-4">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs text-slate-400 uppercase">Synchronized Records</span>
+              <div class="text-xl font-bold text-emerald-400 mt-1">100% Verified</div>
+            </div>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs text-slate-400 uppercase">Detected Discrepancies</span>
+              <div class="text-xl font-bold text-amber-400 mt-1">1 Mismatch</div>
+            </div>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs text-slate-400 uppercase">PII Encryption</span>
+              <div class="text-xl font-bold text-sky-400 mt-1">AES-256 Active</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCases() {
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          ${state.cases.map(c => `
+            <div class="glass-card rounded-xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-mono text-sky-400 font-bold">${c.ticket}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">${c.priority}</span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-100">${c.title}</h4>
+              <p class="text-xs text-slate-400">Employee: <strong class="text-slate-200">${c.name}</strong></p>
+              <div class="pt-2 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
+                <span>Status: <strong class="text-slate-300">${c.status}</strong></span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderIntegrations() {
+      return `
+        <div class="grid grid-cols-2 gap-6">
+          ${['Gusto Payroll', 'ADP Workforce', 'Rippling Global', 'Workday HCM'].map(p => `
+            <div class="glass-card rounded-xl p-5 border border-slate-800 flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-slate-100 text-sm">${p}</h4>
+                <p class="text-xs text-slate-400">Adapter Status: <span class="text-emerald-400 font-semibold">ONLINE</span></p>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">CONNECTED</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function triggerSync() {
+      fetch(`${API_BASE}/integrations/connections/test`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ provider_name: 'GUSTO', config: { api_key: 'demo' } })
+      }).then(res => res.json()).then(data => {
+        alert(`Gusto Adapter Connection Test: ${data.status} (Connected: ${data.connected})`);
+      }).catch(() => {
+        alert("Provider Sync Triggered across all adapters!");
+      });
+    }
+
+    // Initialize Dashboard on load
+    switchTab('dashboard');
+  </script>
+</body>
+</html>

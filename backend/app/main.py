@@ -1,3 +1,12 @@
+import sys
+import os
+
+# Add workspace root and backend directory to sys.path
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+WORKSPACE_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", ".."))
+if WORKSPACE_ROOT not in sys.path:
+    sys.path.insert(0, WORKSPACE_ROOT)
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
