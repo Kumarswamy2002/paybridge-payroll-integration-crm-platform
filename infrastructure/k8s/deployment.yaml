@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paybridge-backend
+  namespace: paybridge-production
+  labels:
+    app: paybridge-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paybridge-backend
+  template:
+    metadata:
+      labels:
+        app: paybridge-backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/kumarswamy2002/paybridge-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: paybridge-secrets
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: paybridge-secrets
+                  key: JWT_SECRET
+            - name: PII_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: paybridge-secrets
+                  key: PII_ENCRYPTION_KEY
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5

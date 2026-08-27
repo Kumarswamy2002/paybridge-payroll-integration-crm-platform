@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paybridge-backend-service
+  namespace: paybridge-production
+spec:
+  type: ClusterIP
+  selector:
+    app: paybridge-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
