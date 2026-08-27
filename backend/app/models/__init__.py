@@ -9,6 +9,7 @@ from app.models.audit import AuditLog
 from app.models.reconciliation import PayrollReconciliationRun, PayrollDiscrepancy
 from app.models.workflow import WorkflowRule, WorkflowExecution, ApprovalRequest
 from app.models.notification import Notification, CaseMessage
+from app.models.developer import ApiKey, WebhookEventLog
 
 __all__ = [
     "Base",
@@ -34,4 +35,6 @@ __all__ = [
     "ApprovalRequest",
     "Notification",
     "CaseMessage",
+    "ApiKey",
+    "WebhookEventLog",
 ]
