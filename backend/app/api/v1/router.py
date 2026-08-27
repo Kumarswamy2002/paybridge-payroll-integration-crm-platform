@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import health, auth, tenants, organizations, employees, payroll, crm, integrations, reconciliation, workflows, notifications, developers, analytics
+from app.api.v1 import health, auth, tenants, organizations, employees, payroll, crm, integrations, reconciliation, workflows, notifications, developers, analytics, ai
 
 api_router = APIRouter()
 
@@ -16,3 +16,4 @@ api_router.include_router(workflows.router, prefix="/workflows", tags=["Workflow
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications & Messaging"])
 api_router.include_router(developers.router, prefix="/developers", tags=["Developer Platform & Webhooks"])
 api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytics & Intelligence"])
+api_router.include_router(ai.router, prefix="/ai", tags=["AI & ML Intelligence"])
