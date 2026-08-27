@@ -6,6 +6,7 @@ from app.models.employee import Employee, EmploymentHistory, EmployeeRelationshi
 from app.models.payroll import PayrollProfile, Compensation
 from app.models.crm import CRMCase, CRMActivity, UnifiedTimelineEvent
 from app.models.audit import AuditLog
+from app.models.reconciliation import PayrollReconciliationRun, PayrollDiscrepancy
 
 __all__ = [
     "Base",
@@ -24,4 +25,6 @@ __all__ = [
     "CRMActivity",
     "UnifiedTimelineEvent",
     "AuditLog",
+    "PayrollReconciliationRun",
+    "PayrollDiscrepancy",
 ]
