@@ -1,0 +1,10 @@
+[run]
+source = backend/app
+omit = 
+    */tests/*
+    */venv/*
+    */site-packages/*
+
+[report]
+show_missing = True
+precision = 2
