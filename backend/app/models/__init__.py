@@ -7,6 +7,7 @@ from app.models.payroll import PayrollProfile, Compensation
 from app.models.crm import CRMCase, CRMActivity, UnifiedTimelineEvent
 from app.models.audit import AuditLog
 from app.models.reconciliation import PayrollReconciliationRun, PayrollDiscrepancy
+from app.models.workflow import WorkflowRule, WorkflowExecution, ApprovalRequest
 
 __all__ = [
     "Base",
@@ -27,4 +28,7 @@ __all__ = [
     "AuditLog",
     "PayrollReconciliationRun",
     "PayrollDiscrepancy",
+    "WorkflowRule",
+    "WorkflowExecution",
+    "ApprovalRequest",
 ]
