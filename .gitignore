@@ -24,6 +24,7 @@ wheels/
 .coverage
 htmlcov/
 *.sqlite3
+*.db
 
 # Node / Next.js
 node_modules/
